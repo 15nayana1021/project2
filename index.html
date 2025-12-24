@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>부동산 계약서 위험 분석기</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+      body {
+        font-family: "Malgun Gothic", sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f4f9;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+      }
+
+      /* 로그인 화면 스타일 */
+      .login-box {
+        text-align: center;
+        padding: 20px;
+      }
+      .login-box input {
+        padding: 10px;
+        margin: 5px;
+        width: 200px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+      .btn-primary {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .btn-secondary {
+        background-color: #95a5a6;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .btn-primary:hover {
+        background-color: #2980b9;
+      }
+
+      /* 메인 앱 스타일 (처음엔 숨김) */
+      #app-page {
+        display: none;
+      }
+
+      .upload-box {
+        border: 2px dashed #3498db;
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 20px;
+        border-radius: 10px;
+      }
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .btn-group button {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-weight: bold;
+      }
+      .btn-analyze {
+        background-color: #3498db;
+      }
+      .btn-txt {
+        background-color: #27ae60;
+        display: none;
+      }
+      .btn-pdf {
+        background-color: #e74c3c;
+        display: none;
+      }
+
+      #result-area {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+        display: none;
+        line-height: 1.6;
+      }
+      .loading {
+        color: #e67e22;
+        font-weight: bold;
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 18px;
+      }
+
+      /* 이력 테이블 */
+      .history-section {
+        margin-top: 40px;
+        border-top: 2px solid #eee;
+        padding-top: 30px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+      th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+      }
+      #history-list tr {
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      #history-list tr:hover {
+        background-color: #e3f2fd;
+      }
+
+      .badge {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+      }
+      .badge-safe {
+        background-color: #27ae60;
+      }
+      .badge-warning {
+        background-color: #f39c12;
+      }
+      .badge-danger {
+        background-color: #e74c3c;
+      }
+      .badge-unknown {
+        background-color: #95a5a6;
+      }
+
+      /* 로그아웃 버튼 */
+      .logout-area {
+        text-align: right;
+        margin-bottom: 10px;
+      }
+      .btn-logout {
+        background: none;
+        border: none;
+        color: #7f8c8d;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🏠 부동산 계약서 위험 분석기</h1>
+
+      <div id="login-page" class="login-box">
+        <h2>로그인</h2>
+        <input type="text" id="username" placeholder="아이디" /><br />
+        <input
+          type="password"
+          id="password"
+          placeholder="비밀번호"
+        /><br /><br />
+        <button class="btn-primary" onclick="login()">로그인</button>
+        <button class="btn-secondary" onclick="signup()">회원가입</button>
+      </div>
+
+      <div id="app-page">
+        <div class="logout-area">
+          <span
+            id="user-display"
+            style="font-weight: bold; color: #3498db"
+          ></span
+          >님 환영합니다!
+          <button class="btn-logout" onclick="logout()">로그아웃</button>
+        </div>
+
+        <div class="upload-box">
+          <input type="file" id="fileInput" accept=".jpg, .png, .pdf" />
+          <p>계약서 파일을 선택하세요 (이미지 또는 PDF)</p>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-analyze" onclick="analyzeContract()">
+            🔍 분석 시작
+          </button>
+          <button id="downloadTxtBtn" class="btn-txt" onclick="downloadTxt()">
+            💾 TXT 저장
+          </button>
+          <button id="downloadPdfBtn" class="btn-pdf" onclick="downloadPdf()">
+            📕 PDF 저장
+          </button>
+        </div>
+
+        <div id="loading" class="loading">
+          AI가 계약서를 분석 중입니다... ⏳
+        </div>
+        <div id="result-area"></div>
+
+        <div class="history-section">
+          <h2>📜 나의 분석 이력</h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 20%">날짜</th>
+                <th style="width: 50%">파일명</th>
+                <th style="width: 30%">위험 등급</th>
+              </tr>
+            </thead>
+            <tbody id="history-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentAnalysisText = "";
+
+      // [기능 1] 회원가입
+      async function signup() {
+        const id = document.getElementById("username").value;
+        const pw = document.getElementById("password").value;
+        if (!id || !pw) return alert("아이디와 비밀번호를 입력하세요.");
+
+        const formData = new FormData();
+        formData.append("username", id);
+        formData.append("password", pw);
+
+        try {
+          const res = await fetch("http://127.0.0.1:8000/signup", {
+            method: "POST",
+            body: formData,
+          });
+          if (res.ok) alert("가입 성공! 이제 로그인해주세요.");
+          else alert("가입 실패: 이미 존재하는 아이디일 수 있습니다.");
+        } catch (e) {
+          alert("서버 오류");
+        }
+      }
+
+      // [기능 2] 로그인
+      async function login() {
+        const id = document.getElementById("username").value;
+        const pw = document.getElementById("password").value;
+
+        const formData = new FormData();
+        formData.append("username", id);
+        formData.append("password", pw);
+
+        try {
+          const res = await fetch("http://127.0.0.1:8000/token", {
+            method: "POST",
+            body: formData,
+          });
+          if (res.ok) {
+            const data = await res.json();
+            localStorage.setItem("access_token", data.access_token);
+            localStorage.setItem("username", id);
+            showApp();
+          } else {
+            alert("로그인 실패: 아이디/비번을 확인하세요.");
+          }
+        } catch (e) {
+          alert("서버 연결 실패");
+        }
+      }
+
+      // [기능 3] 로그아웃
+      function logout() {
+        localStorage.removeItem("access_token");
+        location.reload(); // 새로고침해서 로그인 화면으로
+      }
+
+      // 화면 전환 함수
+      function showApp() {
+        document.getElementById("login-page").style.display = "none";
+        document.getElementById("app-page").style.display = "block";
+        document.getElementById("user-display").innerText =
+          localStorage.getItem("username");
+        loadHistory(); // 로그인 했으니 이력 불러오기
+      }
+
+      // [기능 4] 분석 요청 (토큰 첨부!)
+      async function analyzeContract() {
+        const fileInput = document.getElementById("fileInput");
+        const token = localStorage.getItem("access_token"); // 토큰 꺼내기
+
+        if (!token) {
+          alert("로그인이 필요합니다.");
+          return logout();
+        }
+        if (fileInput.files.length === 0) return alert("파일을 선택해주세요.");
+
+        // UI 초기화
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("loading").style.display = "block";
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        try {
+          const res = await fetch("http://127.0.0.1:8000/analyze-contract", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token, // ★ 출입증 제출
+            },
+            body: formData,
+          });
+
+          const data = await res.json();
+          if (data.status === "success") {
+            currentAnalysisText = data.analysis;
+            document.getElementById("result-area").innerHTML = marked.parse(
+              data.analysis
+            );
+            document.getElementById("result-area").style.display = "block";
+            document.getElementById("downloadTxtBtn").style.display = "block";
+            document.getElementById("downloadPdfBtn").style.display = "block";
+
+            setTimeout(() => loadHistory(), 500); // 이력 갱신
+          } else {
+            alert("분석 실패: " + (data.message || data.detail));
+          }
+        } catch (error) {
+          console.error(error);
+          alert("오류 발생");
+        } finally {
+          document.getElementById("loading").style.display = "none";
+        }
+      }
+
+      // [기능 5] 이력 불러오기 (토큰 첨부!)
+      async function loadHistory() {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
+
+        try {
+          const res = await fetch("http://127.0.0.1:8000/history", {
+            headers: { Authorization: "Bearer " + token }, // ★ 출입증 제출
+          });
+
+          if (!res.ok) return; // 토큰 만료 등
+
+          const historyData = await res.json();
+          const tableBody = document.getElementById("history-list");
+          tableBody.innerHTML = "";
+
+          historyData.forEach((item) => {
+            const row = document.createElement("tr");
+            let badgeClass = "badge-unknown";
+            let riskText = item.risk_level || "분석완료";
+            if (riskText.includes("안전")) badgeClass = "badge-safe";
+            else if (riskText.includes("주의")) badgeClass = "badge-warning";
+            else if (riskText.includes("위험")) badgeClass = "badge-danger";
+
+            row.innerHTML = `<td>${item.created_at}</td><td>${item.filename}</td><td><span class="badge ${badgeClass}">${riskText}</span></td>`;
+            row.onclick = () => viewHistoryDetail(item.analysis_result);
+            tableBody.appendChild(row);
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 상세 보기 및 다운로드 함수는 기존과 동일하게 유지됩니다.
+      function viewHistoryDetail(text) {
+        currentAnalysisText = text;
+        const area = document.getElementById("result-area");
+        area.innerHTML = marked.parse(text);
+        area.style.display = "block";
+        document.getElementById("downloadTxtBtn").style.display = "block";
+        document.getElementById("downloadPdfBtn").style.display = "block";
+        window.scrollTo({ top: 100, behavior: "smooth" });
+      }
+
+      function downloadTxt() {
+        /* 기존 코드 유지 (생략 가능) */
+        if (!currentAnalysisText) return;
+        const blob = new Blob([currentAnalysisText], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "result.txt";
+        link.click();
+      }
+
+      async function downloadPdf() {
+        /* 기존 코드 유지 */
+        if (!currentAnalysisText) return;
+        const btn = document.getElementById("downloadPdfBtn");
+        btn.innerText = "생성 중...";
+        try {
+          const res = await fetch("http://127.0.0.1:8000/create-pdf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: currentAnalysisText }),
+          });
+          if (res.ok) {
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "report.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        } catch (e) {
+          alert("PDF 오류");
+        } finally {
+          btn.innerText = "📕 PDF 저장";
+        }
+      }
+
+      // 페이지 로드 시 로그인 상태 체크
+      window.onload = () => {
+        if (localStorage.getItem("access_token")) {
+          showApp();
+        }
+      };
+    </script>
+  </body>
+</html>
