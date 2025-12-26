@@ -1,2 +1,10 @@
-/.env
-/.gradio
+# 보안 키 파일
+.env
+
+# 파이썬 캐시 및 DB
+__pycache__/
+*.db
+*.sqlite3
+
+# 대용량 데이터 (필요 시)
+*.pdf
