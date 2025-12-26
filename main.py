@@ -68,9 +68,21 @@ app = FastAPI()
 
 # 0. 설정 및 보안
 # CORS 설정
+origins = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:5500",      # VS Code 라이브 서버 (혹시 쓰신다면)
+    "http://127.0.0.1:5500",
+    
+    # ★ 중요: 배포된 Azure 정적 웹 앱 주소를 여기에 꼭 넣어야 합니다!
+    "https://lively-ground-0f3997e0f.4.azurestaticapps.net", 
+    
+    # (선택) ngrok을 쓰고 계시다면 그 주소도 추가
+    "https://unindicted-linda-telford.ngrok-free.dev",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

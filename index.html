@@ -282,10 +282,13 @@
         formData.append("password", pw);
 
         try {
-          const res = await fetch("http://127.0.0.1:8000/signup", {
-            method: "POST",
-            body: formData,
-          });
+          const res = await fetch(
+            "https://unindicted-linda-telford.ngrok-free.dev/signup",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
           if (res.ok) alert("가입 성공! 이제 로그인해주세요.");
           else alert("가입 실패: 이미 존재하는 아이디일 수 있습니다.");
         } catch (e) {
@@ -303,10 +306,13 @@
         formData.append("password", pw);
 
         try {
-          const res = await fetch("http://127.0.0.1:8000/token", {
-            method: "POST",
-            body: formData,
-          });
+          const res = await fetch(
+            "https://unindicted-linda-telford.ngrok-free.dev/token",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
           if (res.ok) {
             const data = await res.json();
             localStorage.setItem("access_token", data.access_token);
@@ -365,13 +371,16 @@
         formData.append("type", contractType);
 
         try {
-          const res = await fetch("http://127.0.0.1:8000/analyze-contract", {
-            method: "POST",
-            headers: {
-              Authorization: "Bearer " + token, // ★ 출입증 제출
-            },
-            body: formData,
-          });
+          const res = await fetch(
+            "https://unindicted-linda-telford.ngrok-free.dev/analyze-contract",
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + token, // ★ 출입증 제출
+              },
+              body: formData,
+            }
+          );
 
           const data = await res.json();
           if (data.status === "success") {
@@ -401,9 +410,12 @@
         if (!token) return;
 
         try {
-          const res = await fetch("http://127.0.0.1:8000/history", {
-            headers: { Authorization: "Bearer " + token }, // ★ 출입증 제출
-          });
+          const res = await fetch(
+            "https://unindicted-linda-telford.ngrok-free.dev/history",
+            {
+              headers: { Authorization: "Bearer " + token }, // ★ 출입증 제출
+            }
+          );
 
           if (!res.ok) return; // 토큰 만료 등
 
@@ -455,11 +467,14 @@
         const btn = document.getElementById("downloadPdfBtn");
         btn.innerText = "생성 중...";
         try {
-          const res = await fetch("http://127.0.0.1:8000/create-pdf", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: currentAnalysisText }),
-          });
+          const res = await fetch(
+            "https://unindicted-linda-telford.ngrok-free.dev/create-pdf",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: currentAnalysisText }),
+            }
+          );
           if (res.ok) {
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
