@@ -205,10 +205,34 @@
           >님 환영합니다!
           <button class="btn-logout" onclick="logout()">로그아웃</button>
         </div>
+        <div
+          class="selection-box"
+          style="margin-bottom: 20px; text-align: center"
+        >
+          <label for="contract-type" style="font-weight: bold; font-size: 1.1em"
+            >📂 계약서 종류 선택:</label
+          >
+          <select
+            id="contract-type"
+            style="padding: 10px; border-radius: 5px; margin-left: 10px"
+          >
+            <option value="real_estate">🏠 부동산 임대차 계약서</option>
+            <option value="labor">💼 근로 계약서 (알바/직장인)</option>
+          </select>
+        </div>
 
         <div class="upload-box">
-          <input type="file" id="fileInput" accept=".jpg, .png, .pdf" />
-          <p>계약서 파일을 선택하세요 (이미지 또는 PDF)</p>
+          <input
+            type="file"
+            id="fileInput"
+            multiple
+            accept=".pdf, .png, .jpg, .jpeg"
+            style="padding: 10px; width: 80%"
+          />
+          <p style="margin-top: 10px; color: #666; font-size: 0.9em">
+            * Ctrl 키를 누르고 클릭하면 여러 파일(계약서, 등기부등본 등)을
+            동시에 선택할 수 있습니다.
+          </p>
         </div>
 
         <div class="btn-group">
@@ -315,6 +339,13 @@
       async function analyzeContract() {
         const fileInput = document.getElementById("fileInput");
         const token = localStorage.getItem("access_token"); // 토큰 꺼내기
+        const typeSelect = document.getElementById("contract-type");
+
+        if (!typeSelect) {
+          alert("HTML에 'contract-type' 아이디를 가진 select 태그가 없습니다!");
+          return;
+        }
+        const contractType = typeSelect.value;
 
         if (!token) {
           alert("로그인이 필요합니다.");
@@ -327,7 +358,11 @@
         document.getElementById("loading").style.display = "block";
 
         const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
+        for (let i = 0; i < fileInput.files.length; i++) {
+          formData.append("files", fileInput.files[i]);
+        }
+
+        formData.append("type", contractType);
 
         try {
           const res = await fetch("http://127.0.0.1:8000/analyze-contract", {
