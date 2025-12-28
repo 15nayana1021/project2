@@ -192,6 +192,41 @@
           id="password"
           placeholder="비밀번호"
         /><br /><br />
+
+        <div
+          style="
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            padding: 0 10px;
+          "
+        >
+          <input
+            type="checkbox"
+            id="signup-agree"
+            style="
+              width: auto;
+              margin-right: 8px;
+              margin-top: 4px;
+              cursor: pointer;
+            "
+          />
+          <label
+            for="signup-agree"
+            style="
+              text-align: left;
+              line-height: 1.4;
+              color: #555;
+              cursor: pointer;
+            "
+          >
+            <strong>[회원가입 필수]</strong> 개인정보 수집 및 이용에
+            동의하며,<br />
+            본 서비스는 법적 효력이 없음을 확인합니다.
+          </label>
+        </div>
         <button class="btn-primary" onclick="login()">로그인</button>
         <button class="btn-secondary" onclick="signup()">회원가입</button>
       </div>
@@ -234,7 +269,29 @@
             동시에 선택할 수 있습니다.
           </p>
         </div>
-
+        <div
+          style="
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 5px;
+            color: #856404;
+          "
+        >
+          <input
+            type="checkbox"
+            id="analysis-agree"
+            style="transform: scale(1.5); margin-right: 10px"
+          />
+          <label
+            for="analysis-agree"
+            style="font-weight: bold; cursor: pointer"
+          >
+            (필수) AI 분석 결과는 단순 참고용이며 법적 효력이 없습니다. <br />
+            중요한 계약은 반드시 실제 변호사/노무사와 상담하겠습니다.
+          </label>
+        </div>
         <div class="btn-group">
           <button type="button" class="btn-analyze" onclick="analyzeContract()">
             🔍 분석 시작
@@ -273,6 +330,14 @@
 
       // [기능 1] 회원가입
       async function signup() {
+        const agreeCheckbox = document.getElementById("signup-agree");
+        if (!agreeCheckbox.checked) {
+          alert(
+            "회원가입을 진행하려면 개인정보 및 이용 약관에 동의해야 합니다."
+          );
+          agreeCheckbox.focus(); // 체크박스로 포커스 이동
+          return; // 함수 강제 종료
+        }
         const id = document.getElementById("username").value;
         const pw = document.getElementById("password").value;
         if (!id || !pw) return alert("아이디와 비밀번호를 입력하세요.");
@@ -343,6 +408,14 @@
 
       // [기능 4] 분석 요청 (토큰 첨부!)
       async function analyzeContract() {
+        const analysisAgreeCheckbox = document.getElementById("analysis-agree");
+        if (!analysisAgreeCheckbox.checked) {
+          alert(
+            "분석을 진행하려면 '법적 효력이 없음'에 동의해야 합니다.\n체크박스를 선택해주세요."
+          );
+          analysisAgreeCheckbox.focus();
+          return; // 함수 강제 종료
+        }
         const fileInput = document.getElementById("fileInput");
         const token = localStorage.getItem("access_token"); // 토큰 꺼내기
         const typeSelect = document.getElementById("contract-type");
