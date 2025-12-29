@@ -327,6 +327,8 @@
 
     <script>
       let currentAnalysisText = "";
+      const BASE_URL =
+        "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net";
 
       // [기능 1] 회원가입
       async function signup() {
@@ -347,13 +349,10 @@
         formData.append("password", pw);
 
         try {
-          const res = await fetch(
-            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/signup",
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+          const res = await fetch(`${BASE_URL}/signup`, {
+            method: "POST",
+            body: formData,
+          });
           if (res.ok) alert("가입 성공! 이제 로그인해주세요.");
           else alert("가입 실패: 이미 존재하는 아이디일 수 있습니다.");
         } catch (e) {
@@ -371,13 +370,10 @@
         formData.append("password", pw);
 
         try {
-          const res = await fetch(
-            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/token",
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+          const res = await fetch(`${BASE_URL}/token`, {
+            method: "POST",
+            body: formData,
+          });
           if (res.ok) {
             const data = await res.json();
             localStorage.setItem("access_token", data.access_token);
@@ -444,16 +440,13 @@
         formData.append("type", contractType);
 
         try {
-          const res = await fetch(
-            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/analyze-contract",
-            {
-              method: "POST",
-              headers: {
-                Authorization: "Bearer " + token, // ★ 출입증 제출
-              },
-              body: formData,
-            }
-          );
+          const res = await fetch(`${BASE_URL}/analyze-contract`, {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token, // ★ 출입증 제출
+            },
+            body: formData,
+          });
 
           const data = await res.json();
           if (data.status === "success") {
@@ -483,12 +476,9 @@
         if (!token) return;
 
         try {
-          const res = await fetch(
-            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/history",
-            {
-              headers: { Authorization: "Bearer " + token }, // ★ 출입증 제출
-            }
-          );
+          const res = await fetch(`${BASE_URL}/history`, {
+            headers: { Authorization: "Bearer " + token }, // ★ 출입증 제출
+          });
 
           if (!res.ok) return; // 토큰 만료 등
 
@@ -540,14 +530,11 @@
         const btn = document.getElementById("downloadPdfBtn");
         btn.innerText = "생성 중...";
         try {
-          const res = await fetch(
-            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/create-pdf",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ text: currentAnalysisText }),
-            }
-          );
+          const res = await fetch(`${BASE_URL}/create-pdf`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: currentAnalysisText }),
+          });
           if (res.ok) {
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);

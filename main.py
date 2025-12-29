@@ -78,7 +78,7 @@ origins = [
     "https://lively-ground-0f3997e0f.4.azurestaticapps.net", 
     
     # (선택) ngrok을 쓰고 계시다면 그 주소도 추가
-    "https://unindicted-linda-telford.ngrok-free.dev",
+    "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net",
 ]
 app.add_middleware(
     CORSMiddleware,
