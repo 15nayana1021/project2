@@ -348,7 +348,7 @@
 
         try {
           const res = await fetch(
-            "8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/signup",
+            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/signup",
             {
               method: "POST",
               body: formData,
@@ -372,7 +372,7 @@
 
         try {
           const res = await fetch(
-            "8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/token",
+            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/token",
             {
               method: "POST",
               body: formData,
@@ -445,7 +445,7 @@
 
         try {
           const res = await fetch(
-            "8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/analyze-contract",
+            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/analyze-contract",
             {
               method: "POST",
               headers: {
@@ -484,7 +484,7 @@
 
         try {
           const res = await fetch(
-            "8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/history",
+            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/history",
             {
               headers: { Authorization: "Bearer " + token }, // ★ 출입증 제출
             }
@@ -541,7 +541,7 @@
         btn.innerText = "생성 중...";
         try {
           const res = await fetch(
-            "8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/create-pdf",
+            "https://8ai-2nd-team5-backend-g7a2cuhzbya2e7cq.koreacentral-01.azurewebsites.net/create-pdf",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
