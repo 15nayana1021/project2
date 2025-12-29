@@ -8,3 +8,6 @@ pandas
 numpy
 aiofiles
 requests
+azure-ai-documentintelligence
+azure-core
+azure-common
