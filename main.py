@@ -69,13 +69,14 @@ app = FastAPI()
 # 0. 설정 및 보안
 # CORS 설정
 origins = [
-    "*"
-    
+    "https://lively-ground-0f3997e0f.4.azurestaticapps.net",
+    "http://localhost:3000", # 로컬 테스트용
+    "*" 
     # (선택) ngrok을 쓰고 계시다면 그 주소도 추가
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
